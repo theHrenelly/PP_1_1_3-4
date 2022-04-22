@@ -1,5 +1,9 @@
 package jm.task.core.jdbc.util;
 
+import jm.task.core.jdbc.model.User;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,5 +39,24 @@ public class Util {
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+    }
+
+    private static SessionFactory sessionFactory;
+
+    public static SessionFactory getSessionFactory() {
+        if (sessionFactory == null) {
+            try {
+                sessionFactory = new Configuration()
+                        .addAnnotatedClass(User.class)
+                        .buildSessionFactory();
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+            }
+        }
+        return sessionFactory;
+    }
+
+    public static void closeSessionFactory() {
+        sessionFactory.close();
     }
 }
